@@ -21,6 +21,11 @@ var svg = d3.select("#mapContainer")
     .attr('class', 'map');
 
 
+// Create a tooltip
+var tip = d3.select("#tooltip").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
 // using Queue to load the external json and csv files
 
 // we use queue to speed up and simplify the process of loading map and data
@@ -36,12 +41,14 @@ function ready(error, us, data){
 
   // Here are the quantitative variables that we need to read to create the map. First, we create empty variables that we're going to fill with our data later
   var poverty_pct = {};
-  var poverty_num = {};
+  //var poverty_num = {};
+  var display_name = {};
 
   // For each row in the data, we define our variables, telling d3 which columns to look for. The + sign indicates that they need to be converted into numbers, rather than read as text strings
   data.forEach(function(d) {
       poverty_pct[d["GEO.id2"]] = +d.HC03_EST_VC01;
-      poverty_num[d["GEO.id2"]] = +d.HC02_EST_VC01;
+      //poverty_num[d["GEO.id2"]] = +d.HC02_EST_VC01;
+      display_name[d["GEO.id2"]] = d["GEO.display-label"];
   });
 
   // pick colors. We first tell d3 what numbers to look for when creating stops...
@@ -61,9 +68,23 @@ function ready(error, us, data){
       .attr("d", geopath)
       .style("fill", function(d) {
         return color_scale(poverty_pct[d.id]);
-      });
+      })
+      //add an event listener and set up the tooltips
+      .on("mouseover", function(d) {
+             tip.transition()
+               .duration(200)
+               .style("opacity", .9);
+             tip.html("<h3>"+display_name[d.id] + "</h3>" + poverty_pct[d.id] + "%")
+               .style("left", (d3.event.pageX) + "px")
+               .style("top", (d3.event.pageY - 28) + "px");
+             })
+           .on("mouseout", function(d) {
+             tip.transition()
+               .duration(500)
+               .style("opacity", 0);
+             });;
 
-//The same code as before, to create borders.
+// The same code as before, to create borders.
 svg.append("path")
     .attr("class", "state-borders") // we already set up styles for these in styles.css
     .attr("d", geopath(topojson.mesh(us, us.objects.states, function(a, b) {

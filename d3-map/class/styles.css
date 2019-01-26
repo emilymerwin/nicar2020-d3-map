@@ -11,3 +11,17 @@
   stroke-linecap: round;
   pointer-events: none;
 }
+#tooltip .tooltip {
+  position: absolute;
+  text-align: center;
+  display: block;
+  padding: 0 10px 10px;
+  font: 12px sans-serif;
+  background: white;
+  border: 0px;
+  border-radius: 8px;
+}
+/* don't trigger mouse events when we touch the tooltip */
+#tooltip, #tooltip .tooltip {
+    pointer-events: none;
+}
