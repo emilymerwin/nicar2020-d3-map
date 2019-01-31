@@ -66,53 +66,69 @@ var circles = svg.selectAll('.data-circle')
 var svgWidth = 300;
 var svgHeight = 150;
 
-var pets = [
+
+var showSeasons = [
 	{
-		"Name": "Princess Mia",
-		"Type": "cat",
-		"Age": 3,
-		"Color": "orange",
+		"seasonNumber": "Season 1",
+		"episodes": 22,
+		"network": "Fox",
+		"airDate": "11/2/2003"
 	},
 	{
-		"Name": "Willy",
-		"Type": "cat",
-		"Age": 6,
-		"Color": "grey",
+		"seasonNumber": "Season 2",
+		"episodes": 18,
+		"network": "Fox",
+		"airDate": "11/7/2004"
 	},
 	{
-		"Name": "Sophie",
-		"Type": "dog",
-		"Age": 4,
-		"Color": "brown",
+		"seasonNumber": "Season 3",
+		"episodes": 13,
+		"network": "Fox",
+		"airDate": "9/19/2005"
 	},
+	{
+		"seasonNumber": "Season 4",
+		"episodes": 15,
+		"network": "Netflix",
+		"airDate": "5/23/2013"
+	},
+	{
+		"seasonNumber": "Season 5",
+		"episodes": 8,
+		"network": "Netflix",
+		"airDate": "5/29/2018"
+	}
 ];
 
-var petSVG = d3.select('#pets-svg').append('svg')
+var showSVG = d3.select('#show-svg').append('svg')
 	.attr('width',svgWidth)
 	.attr('height',svgHeight);
 
-var ageScale = d3.scaleLinear()
+var episodeScale = d3.scaleLinear()
 	.domain([
-		0, d3.max(pets, function(d){ return d.Age })
+		0, d3.max(showSeasons, function(d){ return d.episodes })
 	]) // set the domain from zero (youngest possible pet age) to the max Age value in our data set (one of many nice d3 array manipulation methods)
     .range([0, svgWidth]); // this is the _range_ we want to align our data to. let's make it the width of our SVG so we can make bars
 
-var petScale = d3.scaleBand()
-	.domain(pets.map(function(d) { return d.Name; })) 
+var seasonScale = d3.scaleBand()
+	.domain(showSeasons.map(function(d){ return d.seasonNumber; })) 
 	.paddingInner(0.1)
     .paddingOuter(0.5)
 	.range([0, svgHeight], .1); //setting range from 0 to our svgHeight. scaleBand() scales are good for positioning bars
 
-var bars = petSVG.selectAll('.pet-bar')
-	.data(pets).enter()
-	.append('rect').attr('class','pet-bar')
+var bars = showSVG.selectAll('.season-bar')
+	.data(showSeasons).enter()
+	.append('rect').attr('class','season-bar')
 	.attr('x','0') // our X coordinate for each bar will be 0, because the top left of our rectangle needs to be all the way to the left
 	.attr('y', function(d){
-		return petScale(d.Name) //we pass in our pet's name to the petScale to get its y position
+		return seasonScale(d.seasonNumber) //we pass in our pet's name to the petScale to get its y position
 	})
-	.attr('height', petScale.bandwidth() ) // scaleBand comes with a nice bandWith() method for creating bars
+	.attr('height', seasonScale.bandwidth() ) // scaleBand comes with a nice bandWith() method for creating bars
 	.attr('width', function(d){
-		return ageScale(d.Age) //we pass in our pet's age to the ageScale to see how wide the bar should be
+		return episodeScale(d.episodes) //we pass in our pet's age to the ageScale to see how wide the bar should be
 	});
+
+
+
 
 
