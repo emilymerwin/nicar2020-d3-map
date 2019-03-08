@@ -62,7 +62,7 @@ All of these D3 methods are chainable. So, if we wanted to change more than one 
 D3 selections also work for selecting more than one object at a time. You can do this with the `.selectAll()` method. Let's add another selection to our code, and alter the styles of all the `.selections` divs:
 
 	var allP = d3.selectAll(".selections");
-	allP.style("color","white").style("background","darkcyan");
+	allP.style("color","white").style("background","navy");
 
 Styles aren't the only things we can change. We can also change the attributes associated with DOM elements. Let's drop the `.selections` class from `p1` and give it a different class – `.blue-selection`. If you look at your CSS file, you'll see a class already established in there with a few different style attributes already defined. **Make sure you add this attr change at the end of the chain we already started. If you put it _after_ our allP selections, the changes will not apply.**
 
@@ -97,11 +97,12 @@ For our SVG to show up, it needs a height and width attribute attached, so chain
 
 And the same way we'd add divs or paragraphs to our page, lets add a circle to our SVG. All the attributes used in the code below are necessary to make our shape show up.
 
-	svg.append('circle')
-		.attr('cx', 250) // the x coordinate position of the circle
-		.attr('cy', 250) // the y coordinate position of the circle
+	svg.append('circle') 
+		.attr('cx', '250') // the x coordinate position for the circle center
+		.attr('cy', '250') // the y coordinate position for the circle center
 		.attr('r','100') // the radius of the circle
 		.style('fill','blue') // svg elements use "fill" and "stroke" instead of background color, color or border
+
 
 Let's add a rectangle as well.
 
@@ -110,7 +111,7 @@ Let's add a rectangle as well.
 		.attr('y', '250') // the y coordinate position of the top left corner of the rectangle
 		.attr('width','150') // the width
 		.attr('height','75') // the height
-		.style('fill','red')
+		.style('fill','red');
 
 Different shapes require different attributes. For example: `line` elements need coordinates for their starting points and their end points: x1, x2, y1, and y2.
 
@@ -121,7 +122,7 @@ Read more about how selections work → [https://bost.ocks.org/mike/selection/](
 
 Now that we know how to append DOM elements and make changes to said DOM elements on our page, let's take a look at how the *data* part of D3 works. But first we need some data. Let's write out a basic array of values to work with.
 
-	var circleData = [50,100,230,415];
+	var circleData = [75,100,230,415];
 
 Let's say we want to see a circle for each number in our array. To do this, we need to *join* our data to our DOM elements we're going to append. To do this, we'll use D3's *enter, update and exit* methods.
 
@@ -132,13 +133,14 @@ For this class, we will be focusing on using `.enter()` because we won't be maki
 
 So we could just have a set of circles positioned according to our array using the array methods we already know about, like indices and loops. It would look something like this:
 
-	for (var i = 0; i < circleData.length; i++){
+	circles.forEach(function(circle){
 		svg.append('circle')
 			.attr('class','data-circle')
 			.attr('cx', circleData[i])
 			.attr('cy', '30')
 			.attr('r','20')
-	}
+	});
+
 
 But D3 selections let us do this using a shortened command that actually _joins_ the data to our elements. Put the following code in your main.js file:
 
@@ -174,61 +176,77 @@ One of the great utilities D3 provides for manipulating data for visual represen
 
 TL;DR Scales let you align your data to fit your visual space. This is extremely helpful when trying to visualize your data in proportion to the visual space you provide.
 
-There are multiple kinds of D3 scales to work with, but we'll first look at *linear* scales. Let's grab that array of pet data we used last class and set up a scale to help us visualize it inside an SVG that's 300px by 150px. Add this to your `main.js` file:
+There are multiple kinds of D3 scales to work with, but we'll first look at *linear* scales. Let's use this array of Arrested Development season data and set up a scale to help us visualize it inside an SVG that's 300px by 150px. Add this to your `main.js` file:
 
 	var svgWidth = 300;
 	var svgHeight = 150;
 
-	var pets = [
+	var showSeasons = [
 		{
-			"Name": "Princess Mia",
-			"Type": "cat",
-			"Age": 3,
-			"Color": "orange",
+			"seasonNumber": "Season 1",
+			"episodes": 22,
+			"network": "Fox",
+			"airDate": "11/2/2003"
 		},
 		{
-			"Name": "Willy",
-			"Type": "cat",
-			"Age": 6,
-			"Color": "grey",
+			"seasonNumber": "Season 2",
+			"episodes": 18,
+			"network": "Fox",
+			"airDate": "11/7/2004"
 		},
 		{
-			"Name": "Sophie",
-			"Type": "dog",
-			"Age": 4,
-			"Color": "brown",
+			"seasonNumber": "Season 3",
+			"episodes": 13,
+			"network": "Fox",
+			"airDate": "9/19/2005"
 		},
+		{
+			"seasonNumber": "Season 4",
+			"episodes": 15,
+			"network": "Netflix",
+			"airDate": "5/23/2013"
+		},
+		{
+			"seasonNumber": "Season 5",
+			"episodes": 8,
+			"network": "Netflix",
+			"airDate": "5/29/2018"
+		}
 	];
 
-	var petSVG = d3.select('#pets-svg').append('svg')
+	var showSVG = d3.select('#show-svg').append('svg')
 		.attr('width',svgWidth)
 		.attr('height',svgHeight);
 
-	var ageScale = d3.scaleLinear()
+	var episodeScale = d3.scaleLinear()
 		.domain([
-			0, d3.max(pets, function(d){ return d.Age })
-		]) // set the domain from zero (youngest possible pet age) to the max Age value in our data set (one of many nice d3 array manipulation methods)
+			0, d3.max(showSeasons, function(d){ return d.episodes })
+		]) // set the domain from zero (so the bar values start at zero) to the max episode total in our data set (one of many nice d3 array manipulation methods)
 	    .range([0, svgWidth]); // this is the _range_ we want to align our data to. let's make it the width of our SVG so we can make bars
 
-To test out our `ageScale`, let's pass in one of our `pets`!
+To test out our `episodeScale`, let's pass in one of our `showSeasons`!
 
-	console.log( ageScale(pets[0].Age) );
+	console.log( episodeScale(showSeasons[1].episodes) );
 
-You should see a `100` printed in your console. Looking at our data, we know that 0-200 is the _range_ of our visual field (being our SVG), and 0-6 is the _domain_ of our possible input values, which would make an age of 3 (Princess Mia's age) equal to 100. It's all about making our visual an actual _to scale_ representation of our data!
+You should see a `245.454545` printed in your console. Looking at our data, we know that 0-300 is the _range_ of our visual field (being our SVG), and 0-22 is the _domain_ of our possible input values, which would make an episode total of 18 equate to about 245 pixels. It's all about making our visual an actual _to scale_ representation of our data!
 
 You can also set up categorical scales in D3 – these are called *ordinal scales*. From the docs:
 
 >Unlike continuous scales, ordinal scales have a discrete domain and range. For example, an ordinal scale might map a set of named categories to a set of colors, or determine the horizontal positions of columns in a column chart.
 
-Let's say we want to make a bar chart of pet ages, with a bar for each pet. To set up this bar chart, we'd need a `rect` for each pet, and each `rect` needs X and Y coordinates. We already have one of our coordinate positions – from our linear scale we set up above – but now we need to know where each bar needs to be positioned. We can use an ordinal scale to determine where the bars should be positioned. Add the following to your code:
+Let's say we want to make a bar chart of the total episodes in each Arrested Development season, with a bar for each season. To set up this bar chart, we'd need a `rect` for each season, and each `rect` needs X and Y coordinates. We already have one of our coordinate positions – from our linear scale we set up above – but now we need to know where each bar needs to be positioned. We can use an ordinal scale to determine where the bars should be positioned. Add the following to your code:
 
-	var petScale = d3.scaleBand()
-		.domain(pets.map(function(d) { return d.Name; })) 
-		.range([0, svgHeight], .1); //setting range from 0 to height, like our svg. scaleBand() scales are good for positioning bars
 
-If you want to test it out, you can pass in one of our pets to the `petScale` and `console.log()` it.
+	var seasonScale = d3.scaleBand()
+		.domain(showSeasons.map(function(d){ return d.seasonNumber; })) 
+		.paddingInner(0.1)
+	    .paddingOuter(0.5)
+		.range([0, svgHeight], .1); //setting range from 0 to our svgHeight. scaleBand() scales are good for positioning bars
 
-	console.log(petScale(pets[1]));
+
+If you want to test it out, you can pass in one of the seasons to the `seasonScale` and `console.log()` it.
+
+	console.log(seasonScale(showSeasons[1].seasonNumber));
 
 
 Further reading on D3 scales:
@@ -238,19 +256,20 @@ Further reading on D3 scales:
 
 ### MAKING A CHART
 
-Now that we understand all the basic pieces and parts that put together a D3 visualization, let's make a chart of our `pets` data! We've already set up our SVG inside the `petSVG` variable, we can use our selections skills to create some bars to visualize our pets and their ages. We'll make this a horizontal bar chart:
+Now that we understand all the basic pieces and parts that put together a D3 visualization, let's make a chart of our `showSeasons` data! We've already set up our SVG inside the `showSVG` variable, we can use our selections skills to create some bars to visualize the number of episodes in each season of Arrested Development. We'll make this a horizontal bar chart:
 
-	var bars = petSVG.selectAll('.pet-bar')
-		.data(pets).enter()
-		.append('rect').attr('class','pet-bar')
+	var bars = showSVG.selectAll('.season-bar')
+		.data(showSeasons).enter()
+		.append('rect').attr('class','season-bar')
 		.attr('x','0') // our X coordinate for each bar will be 0, because the top left of our rectangle needs to be all the way to the left
 		.attr('y', function(d){
-			return petScale(d.Name) //we pass in our pet's name to the petScale to get its y position
+			return seasonScale(d.seasonNumber) //we pass in our pet's name to the petScale to get its y position
 		})
-		.attr('height', petScale.bandWidth() ) // scaleBand comes with a nice bandWith() method for creating bars
+		.attr('height', seasonScale.bandwidth() ) // scaleBand comes with a nice bandWith() method for creating bars
 		.attr('width', function(d){
-			return ageScale(d.Age) //we pass in our pet's age to the ageScale to see how wide the bar should be
+			return episodeScale(d.episodes) //we pass in our pet's age to the ageScale to see how wide the bar should be
 		});
+
 
 
 #### Other useful methods we likely won't have time for

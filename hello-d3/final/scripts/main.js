@@ -17,8 +17,8 @@ allP.style("color","white").style("background","navy");
 
 /* add an inner paragraph with append */
 allP.append("p")
-		.attr("class","inner-paragraph")
-		.text("Our new paragraph");
+	.attr("class","inner-paragraph")
+	.text("Our new paragraph");
 
 /* our first SVG! */
 var svg = d3.select('#svg').append('svg')
@@ -49,7 +49,7 @@ var svg = d3.select('#svg').append('svg')
 var circleData = [75,100,230,415];
 
 /* lets add some circles with this data */
-var circles = svg.selectAll('.data-circle') 
+	var circles = svg.selectAll('.data-circle') 
 		.data(circleData).enter()
 		.append('circle').attr('class','data-circle')
 			.attr('cx', function(d){
@@ -115,6 +115,8 @@ var seasonScale = d3.scaleBand()
 	.paddingInner(0.1)
     .paddingOuter(0.5)
 	.range([0, svgHeight], .1); //setting range from 0 to our svgHeight. scaleBand() scales are good for positioning bars
+
+console.log(seasonScale(showSeasons[1].seasonNumber));
 
 var bars = showSVG.selectAll('.season-bar')
 	.data(showSeasons).enter()
