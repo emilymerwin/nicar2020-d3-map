@@ -1,6 +1,6 @@
 # A simple D3 map
 
-- https://github.com/emilymerwin/nicar19-javascript/tree/master/d3-map
+- https://bit.ly/2EVX3wj
 - @emilymerwin
 - emerwin@ajc.com
 
