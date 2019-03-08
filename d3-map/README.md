@@ -11,7 +11,7 @@
 - Open Sublime Text and go to File-Open, click once on the folder name, and click the open button. That should open all the files for the class for you to navigate. We will be doing everything in the class/main.js file. The "Final" directory has a built example of our final code.
 
 ## Reference chunks
-- Create the map DOM element in main.js:
+### Create the map DOM element in main.js:
 
 ```javascript
 // First step: create the canvas we will paint on with our data
