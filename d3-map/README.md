@@ -68,7 +68,7 @@ function ready(error, us, data){
 
 // TODO: add borders to state shapes
 
-console.log("We did it!")
+
 } // ready
 ```
 
@@ -95,14 +95,16 @@ svg.append("path")
 - find `// TODO: Set up poverty variables` and we will set up our poverty variables:
 ```javascript
   // Here are the quantitative variables that we need to read to create the map. First, we create empty variables that we're going to fill with our data later
-  var poverty_pct = {};
-  var display_name = {};
+  var poverty_pcts = {};
+  var display_names = {};
 
   // For each row in the data, we define our variables, telling d3 which columns to look for. The + sign indicates that they need to be converted into numbers, rather than read as text strings
   data.forEach(function(d) {
-      poverty_pct[d["GEO.id2"]] = +d.HC03_EST_VC01;
-      display_name[d["GEO.id2"]] = d["GEO.display-label"];
+      poverty_pcts[d["GEO.id2"]] = +d.HC03_EST_VC01;
+      display_names[d["GEO.id2"]] = d["GEO.display-label"];
   });
+  console.log("poverty_pcts array: ", poverty_pcts);
+  console.log("display_names array: ", display_names);
 ```
 
 ### Add colors
@@ -118,10 +120,10 @@ svg.append("path")
       .range(["#f2f0f7", "#dadaeb", "#bcbddc", "#9e9ac8", "#756bb1", "#54278f"]);
 ```
 
-- find `  // TODO: add colors` and add the colors:
+- find `  // TODO: add colors` to tell each state shape how to determine its color:
 ```javascript
 .style("fill", function(d) {
-  return color_scale(poverty_pct[d.id]);
+  return color_scale(poverty_pcts[d.id]);
 })
  ```
  
@@ -143,7 +145,7 @@ var tip = d3.select("#tooltip").append("div")
        tip.transition()
          .duration(200)
          .style("opacity", .9);
-       tip.html("<h3>"+display_name[d.id] + "</h3>" + poverty_pct[d.id] + "%")
+       tip.html("<h3>"+display_names[d.id] + "</h3>" + poverty_pcts[d.id] + "%")
          .style("left", (d3.event.pageX) + "px")
          .style("top", (d3.event.pageY - 28) + "px");
        })
@@ -152,4 +154,5 @@ var tip = d3.select("#tooltip").append("div")
          .duration(500)
          .style("opacity", 0);
        });
+console.log("We did it!")
 ```
