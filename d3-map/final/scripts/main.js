@@ -40,13 +40,13 @@ function ready(error, us, data){
   if (error) throw error;
 
   // Here are the quantitative variables that we need to read to create the map. First, we create empty variables that we're going to fill with our data later
-  var poverty_pct = {};
+  var poverty_pcts = {};
   //var poverty_num = {};
   var display_name = {};
 
   // For each row in the data, we define our variables, telling d3 which columns to look for. The + sign indicates that they need to be converted into numbers, rather than read as text strings
   data.forEach(function(d) {
-      poverty_pct[d["GEO.id2"]] = +d.HC03_EST_VC01;
+      poverty_pcts[d["GEO.id2"]] = +d.HC03_EST_VC01;
       //poverty_num[d["GEO.id2"]] = +d.HC02_EST_VC01;
       display_name[d["GEO.id2"]] = d["GEO.display-label"];
   });
@@ -67,14 +67,14 @@ function ready(error, us, data){
       .enter().append("path")
       .attr("d", geopath)
       .style("fill", function(d) {
-        return color_scale(poverty_pct[d.id]);
+        return color_scale(poverty_pcts[d.id]);
       })
       //add an event listener and set up the tooltips
       .on("mouseover", function(d) {
              tip.transition()
                .duration(200)
                .style("opacity", .9);
-             tip.html("<h3>"+display_name[d.id] + "</h3>" + poverty_pct[d.id] + "%")
+             tip.html("<h3>"+display_name[d.id] + "</h3>" + poverty_pcts[d.id] + "%")
                .style("left", (d3.event.pageX) + "px")
                .style("top", (d3.event.pageY - 28) + "px");
              })
@@ -82,12 +82,11 @@ function ready(error, us, data){
              tip.transition()
                .duration(500)
                .style("opacity", 0);
-             });;
+             });
 
-// The same code as before, to create borders.
 svg.append("path")
     .attr("class", "state-borders") // we already set up styles for these in styles.css
-    .attr("d", geopath(topojson.mesh(us, us.objects.states, function(a, b) {
+    .attr("d", geopath(topojson.mesh(us, us.objects.states, function(a, b) {  // topojson.mesh basically simplifies the borders so that identical boundaries shared by two shapes will be treated as one
         return a !== b;
     })));
 
