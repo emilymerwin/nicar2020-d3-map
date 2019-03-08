@@ -82,7 +82,7 @@ function ready(error, us, data){
              tip.transition()
                .duration(500)
                .style("opacity", 0);
-             });;
+             });
 
 // The same code as before, to create borders.
 svg.append("path")
