@@ -39,6 +39,15 @@ var svg = d3.select("#mapContainer")
 
 // TODO: Create a tooltip here
 
+// TODO: Load JSON
+```
+
+- Open your browser console and inspect the page - you should see your new elements in the DOM
+
+### Add json shape data
+- find `TODO: Load JSON` and add: 
+
+```javascript
 // using Queue to load the external json and csv files
 // we use queue to speed up and simplify the process of loading map and data
 queue()
@@ -67,11 +76,8 @@ function ready(error, us, data){
   // TODO: add event listener for tooltips
 
 // TODO: add borders to state shapes
-
-
 } // ready
 ```
-
 
 ### Add borders to state shapes
 - find `// TODO: add borders to state shapes`
