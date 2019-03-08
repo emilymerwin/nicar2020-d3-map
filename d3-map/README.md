@@ -1,17 +1,17 @@
 # A simple D3 map
 
-https://github.com/ashlynstill/nicar19-javascript/tree/master/d3-map
-@emilymerwin
-emerwin@ajc.com
+- https://github.com/emilymerwin/nicar19-javascript/
+- @emilymerwin
+- emerwin@ajc.com
 
 
 ## Set up our dev environment
-- Open a simple local python server to run our page: `python -m SimpleHTTPServer`
+- Start a local python server in your terminal to run our page: `python -m SimpleHTTPServer`
 - Open your web browser and visit http://localhost:8000/ and navigate to the `class` folder.
-- Open Sublime Text and go to File-Open, click once on the folder name, and click the open button. That should open all the files for the class for you to navigate.
+- Open Sublime Text and go to File-Open, click once on the folder name, and click the open button. That should open all the files for the class for you to navigate. We will be doing everything in the class/main.js file. The "Final" directory has a built example of our final code.
 
 ## Reference chunks
-- Create the map shapes:
+- Create the map DOM element in main.js:
 
 ```javascript
 // First step: create the canvas we will paint on with our data
@@ -82,10 +82,9 @@ function ready(error, us, data){
 ### Add borders to state shapes
 - find `// TODO: add borders to state shapes`
 ```javascript
-// The same code as before, to create borders.
 svg.append("path")
     .attr("class", "state-borders") // we already set up styles for these in styles.css
-    .attr("d", geopath(topojson.mesh(us, us.objects.states, function(a, b) {
+    .attr("d", geopath(topojson.mesh(us, us.objects.states, function(a, b) { // topojson.mesh basically simplifies the borders so that identical boundaries shared by two shapes will be treated as one
         return a !== b;
     })));
 ```

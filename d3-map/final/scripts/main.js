@@ -84,10 +84,9 @@ function ready(error, us, data){
                .style("opacity", 0);
              });
 
-// The same code as before, to create borders.
 svg.append("path")
     .attr("class", "state-borders") // we already set up styles for these in styles.css
-    .attr("d", geopath(topojson.mesh(us, us.objects.states, function(a, b) {
+    .attr("d", geopath(topojson.mesh(us, us.objects.states, function(a, b) {  // topojson.mesh basically simplifies the borders so that identical boundaries shared by two shapes will be treated as one
         return a !== b;
     })));
 
