@@ -26,20 +26,17 @@ var tip = d3.select("#tooltip").append("div")
     .attr("class", "tooltip")
     .style("opacity", 0);
 
-// using Queue to load the external json and csv files
 
-// we use queue to speed up and simplify the process of loading map and data
-queue()
-    .defer(d3.json, "data/states-albers-10m.json") // source: https://github.com/topojson/us-atlas#states-albers-10m.json
-    .defer(d3.csv, "data/poverty_data2018.csv") // source: 2018 Census ACS 5-Year Estimates Subject Tables https://data.census.gov/cedsci/table?q=&g=0100000US.04000.001&table=S0501&tid=ACSST5Y2018.S0501
-    .await(ready); //we need our data files to finish loading before we can use them
-
-
-function ready(error, us, data){
-  //In case there's an error.
-  if (error) throw error;
+// promises ensure the data are loaded before we try to use them
+Promise.all([
+  d3.json("data/states-albers-10m.json"), // source: https://github.com/topojson/us-atlas#states-albers-10m.json
+  d3.csv("data/poverty_data2018.csv") // source: 2018 Census ACS 5-Year Estimates Subject Tables https://data.census.gov/cedsci/table?q=&g=0100000US.04000.001&table=S0501&tid=ACSST5Y2018.S0501
+]).then(ready, function(error) {
+  console.log(error); // we could have ended with .then(ready) but you might like to know about the error argument for debugging
+});
 
   // Here are the quantitative variables that we need to read to create the map. First, we create empty variables that we're going to fill with our data later
+function ready([us, data]) {
   var poverty_pcts = {};
 
   // For each row in the data, we define our variables, telling d3 which columns to look for. The + sign indicates that they need to be converted into numbers, rather than read as text strings

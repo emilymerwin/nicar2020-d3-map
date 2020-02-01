@@ -51,19 +51,16 @@ var svg = d3.select("#mapContainer")
 - find `TODO: Load JSON` and add: 
 
 ```javascript
-// using Queue to load the external json and csv files
-// we use queue to speed up and simplify the process of loading map and data
-queue()
-    .defer(d3.json, "data/states-albers-10m.json") // source: https://github.com/topojson/us-atlas#states-albers-10m.json
-    // TODO: Load poverty data CSV here
-    .await(ready); //we need our data files to finish loading before we can use them
+// TODO: update to include multiple data sources/promises
+// promises ensure the data is loaded before we try to use it
+d3.json("data/states-albers-10m.json")
+        .then(ready, function(error) {
+  console.log(error); // we could have ended with .then(ready) but you might like to know about the error argument for debugging
+});
 
-
-function ready(error, us, data){
-  //In case there's an error.
-  if (error) throw error;
 
   // TODO: Set up poverty variables
+function ready(us){
 
 
   // TODO: Set up colors
@@ -94,10 +91,22 @@ svg.append("path")
 
 ### Add poverty data to join with our shapes:
 
-- find  `// TODO: Load poverty data CSV here` and add in our poverty data:
+- find  `// TODO: Load poverty data CSV here` and replace the single promise to include multiple promises/data sources:
 
 ```javascript
-.defer(d3.csv, "data/poverty_data.csv")
+// promises ensure the data are loaded before we try to use them
+Promise.all([
+  d3.json("data/states-albers-10m.json"), // source: https://github.com/topojson/us-atlas#states-albers-10m.json
+  d3.csv("data/poverty_data2018.csv") // source: 2018 Census ACS 5-Year Estimates Subject Tables https://data.census.gov/cedsci/table?q=&g=0100000US.04000.001&table=S0501&tid=ACSST5Y2018.S0501
+]).then(ready, function(error) {
+  console.log(error); // we could have ended with .then(ready) but you might like to know about the error argument for debugging
+});
+```
+
+and update the `ready` function to take an array of arguments:
+
+```javascript
+function ready([us, data]) {...}
 ```
 
 - find `// TODO: Set up poverty variables` and we will set up our poverty variables:
