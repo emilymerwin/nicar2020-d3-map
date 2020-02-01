@@ -31,7 +31,7 @@ var tip = d3.select("#tooltip").append("div")
 // we use queue to speed up and simplify the process of loading map and data
 queue()
     .defer(d3.json, "data/states-albers-10m.json") // source: https://github.com/topojson/us-atlas#states-albers-10m.json
-    .defer(d3.csv, "data/poverty_data.csv")
+    .defer(d3.csv, "data/poverty_data2018.csv") // source: 2018 Census ACS 5-Year Estimates Subject Tables https://data.census.gov/cedsci/table?q=&g=0100000US.04000.001&table=S0501&tid=ACSST5Y2018.S0501
     .await(ready); //we need our data files to finish loading before we can use them
 
 
@@ -44,7 +44,7 @@ function ready(error, us, data){
 
   // For each row in the data, we define our variables, telling d3 which columns to look for. The + sign indicates that they need to be converted into numbers, rather than read as text strings
   data.forEach(function(d) {
-      poverty_pcts[d["GEO.display-label"]] = +d.HC03_EST_VC01;
+      poverty_pcts[d["NAME"]] = +d.S0501_C01_104E;
   });
 
   // pick colors. We first tell d3 what numbers to look for when creating stops...

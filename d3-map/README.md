@@ -10,6 +10,7 @@
 - Open your web browser and visit http://localhost:8000/ and navigate to the `class` folder.
 - Open Sublime Text and go to File-Open, click once on the folder name, and click the open button. That should open all the files for the class for you to navigate. We will be doing everything in the class/main.js file. The "Final" directory has a built example of our final code.
 ### Data sources
+- Poverty data: [2018 Census ACS 5-Year Estimates Subject Tables](https://data.census.gov/cedsci/table?q=&g=0100000US.04000.001&table=S0501&tid=ACSST5Y2018.S0501)
 - U.S. Atlas shapes: [U.S. Atlas TopoJSON](https://github.com/topojson/us-atlas#readme)
 
 ## Reference chunks
@@ -106,7 +107,7 @@ svg.append("path")
 
   // For each row in the data, we define our variables, telling d3 which columns to look for. The + sign indicates that they need to be converted into numbers, rather than read as text strings
   data.forEach(function(d) {
-      poverty_pcts[d["GEO.display-label"]] = +d.HC03_EST_VC01;
+      poverty_pcts[d["NAME"]] = +d.S0501_C01_104E;
   });
   console.log("poverty_pcts array: ", poverty_pcts);
 ```
