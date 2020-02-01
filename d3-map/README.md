@@ -9,6 +9,8 @@
 - Start a local python server in your terminal to run our page: `python -m SimpleHTTPServer`
 - Open your web browser and visit http://localhost:8000/ and navigate to the `class` folder.
 - Open Sublime Text and go to File-Open, click once on the folder name, and click the open button. That should open all the files for the class for you to navigate. We will be doing everything in the class/main.js file. The "Final" directory has a built example of our final code.
+### Data sources
+- U.S. Atlas shapes: [U.S. Atlas TopoJSON](https://github.com/topojson/us-atlas#readme)
 
 ## Reference chunks
 ### Create the map DOM element in main.js:
@@ -51,7 +53,7 @@ var svg = d3.select("#mapContainer")
 // using Queue to load the external json and csv files
 // we use queue to speed up and simplify the process of loading map and data
 queue()
-    .defer(d3.json, "data/us.json") // source: https: //unpkg.com/us-atlas@1.0.2/us/10m.json
+    .defer(d3.json, "data/states-albers-10m.json") // source: https://github.com/topojson/us-atlas#states-albers-10m.json
     // TODO: Load poverty data CSV here
     .await(ready); //we need our data files to finish loading before we can use them
 
@@ -101,15 +103,12 @@ svg.append("path")
 ```javascript
   // Here are the quantitative variables that we need to read to create the map. First, we create empty variables that we're going to fill with our data later
   var poverty_pcts = {};
-  var display_names = {};
 
   // For each row in the data, we define our variables, telling d3 which columns to look for. The + sign indicates that they need to be converted into numbers, rather than read as text strings
   data.forEach(function(d) {
-      poverty_pcts[d["GEO.id2"]] = +d.HC03_EST_VC01;
-      display_names[d["GEO.id2"]] = d["GEO.display-label"];
+      poverty_pcts[d["GEO.display-label"]] = +d.HC03_EST_VC01;
   });
   console.log("poverty_pcts array: ", poverty_pcts);
-  console.log("display_names array: ", display_names);
 ```
 
 ### Add colors
@@ -128,7 +127,7 @@ svg.append("path")
 - find `  // TODO: add colors` to tell each state shape how to determine its color:
 ```javascript
 .style("fill", function(d) {
-  return color_scale(poverty_pcts[d.id]);
+  return color_scale(poverty_pcts[d.properties.name]);
 })
  ```
  
@@ -150,7 +149,7 @@ var tip = d3.select("#tooltip").append("div")
        tip.transition()
          .duration(200)
          .style("opacity", .9);
-       tip.html("<h3>"+display_names[d.id] + "</h3>" + poverty_pcts[d.id] + "%")
+       tip.html("<h3>" + d.properties.name + "</h3>" + poverty_pcts[d.properties.name] + "%")
          .style("left", (d3.event.pageX) + "px")
          .style("top", (d3.event.pageY - 28) + "px");
        })
