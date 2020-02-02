@@ -1,6 +1,6 @@
 # A simple D3 map
 
-- https://bit.ly/2EVX3wj
+- https://bit.ly/2Olz4ut
 - @emilymerwin
 - emerwin@ajc.com
 
