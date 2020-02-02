@@ -1,7 +1,7 @@
 # A simple D3 map
 
 - https://bit.ly/2Olz4ut
-- @emilymerwin
+- []@emilymerwin](https://twitter.com/emilymerwin)
 - emerwin@ajc.com
 
 
