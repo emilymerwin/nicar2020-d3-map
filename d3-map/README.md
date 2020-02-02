@@ -5,168 +5,181 @@
 - emerwin@ajc.com
 
 
-## Set up our dev environment
-- Start a local python server in your terminal to run our page: `python -m SimpleHTTPServer`
-- Open your web browser and visit http://localhost:8000/ and navigate to the `class` folder.
-- Open Sublime Text and go to File-Open, click once on the folder name, and click the open button. That should open all the files for the class for you to navigate. We will be doing everything in the class/main.js file. The "Final" directory has a built example of our final code.
 ### Data sources
 - Poverty data: [2018 Census ACS 5-Year Estimates Subject Tables](https://data.census.gov/cedsci/table?q=&g=0100000US.04000.001&table=S0501&tid=ACSST5Y2018.S0501)
 - U.S. Atlas shapes: [U.S. Atlas TopoJSON](https://github.com/topojson/us-atlas#readme)
 
-## Reference chunks
-### Create the map DOM element in main.js:
+
+### Some notes
+- We are not using jQuery here - not that you every _need_ jQuery, but you especially don't if you are using d3 - it can do pretty much anything jQuery can.
+- good descriptive variable names - consider something easy to do a search for
+
+# 1. Set up our dev environment
+- Start a local python server in your terminal to run our page: `python -m SimpleHTTPServer` (or `python3 -m http.server` for python 3)
+- Open your web browser and visit http://localhost:8000/ and navigate to the `class` folder.
+- Open Sublime Text and go to File-Open, click once on the folder name, and click the open button. That should open all the files for the class for you to navigate. We will be doing everything in the class/main.js file.
+- The "Final" directory has a built example of our final code.
+
+
+# 2. Create the map DOM element in main.js:
+:new: `// TODO: set up SVG element`
 
 ```javascript
-// First step: create the canvas we will paint on with our data
-// We start by defining the size of that canvas.
-var width = 960,
-    height = 600;
-
-// Create GeoPath function that uses built-in D3 functionality to turn
-// lat/lon coordinates into screen coordinates
-var geopath = d3.geoPath();
-
-
-// tell d3 to build that canvas for us in the body of the html document. Using d3's special syntax, we tell it to find the "#mapContainer" div
+// select "#mapContainer" div already set up in index.html
 var svg = d3.select("#mapContainer")
-    // add on an svg, 
+    // add on an svg element
     .append("svg")
-    // Make that svg the right width and height - this is important or it won't show up!
+    // Set the svg to the width and height we already defined - otherwise it won't show up!
     .attr("width", width)
     .attr("height", height)
-    // add on a "g" to hold a group of shapes
+    // add on a "g" to hold a group of state shapes
     .append('g')
     // and give it the class we define in our css
     .attr('class', 'map');
-
-
-// TODO: Create a tooltip here
-
-// TODO: Load JSON
 ```
 
-- Open your browser console and inspect the page - you should see your new elements in the DOM
+:eyes: Open your browser console and inspect the page - you should see your new elements in the DOM
 
-### Add json shape data
-- find `TODO: Load JSON` and add: 
-
+# 3. Add json shapes
+ :new: `// TODO: Load shapes`:
+ 
 ```javascript
-// TODO: update to include multiple data sources/promises
+// TODO: replace when we add poverty data
 // promises ensure the data is loaded before we try to use it
-d3.json("data/states-albers-10m.json")
-        .then(ready, function(error) {
-  console.log(error); // we could have ended with .then(ready) but you might like to know about the error argument for debugging
+d3.json(geoShapesJson)
+    .then(ready, function(error) {
+      console.log(error); // we could have ended with .then(ready) but you might like to know about the error argument for debugging
 });
 
+// TODO: Update to accept an array of data
+function ready(geoShapes){
+  // TODO: Set up poverty data objects
 
-  // TODO: Set up poverty variables
-function ready(us){
+  // TODO: set up color scale
 
+  // TODO: create HTML tooltip/selection
 
-  // TODO: Set up colors
-
-  // create a selection to pair with our data
+  // join our shape data to the selection and add it to the DOM via `enter()`
   svg.append("g")
       .attr("class", "states")
       .selectAll("path")
-      .data(topojson.feature(us, us.objects.states).features)
+      .data(topojson.feature(geoShapes, geoShapes.objects.states).features)
       .enter().append("path")
-      .attr("d", geopath)
-  // TODO: add colors
-  // TODO: add event listener for tooltips
+      // convert lat/lon coordinates into screen coordinates
+      // https://github.com/d3/d3-geo/blob/v1.11.9/README.md#geoPath
+      .attr("d", d3.geoPath())
+      // TODO: assign fill color to states
+      // TODO: add event listener for tooltips
 
-// TODO: add borders to state shapes
-} // ready
+  // TODO: add borders to state shapes
+} // end ready()
 ```
+:eyes: Refresh the page and you should see a map
 
-### Add borders to state shapes
-- find `// TODO: add borders to state shapes`
-```javascript
-svg.append("path")
-    .attr("class", "state-borders") // we already set up styles for these in styles.css
-    .attr("d", geopath(topojson.mesh(us, us.objects.states, function(a, b) { // topojson.mesh basically simplifies the borders so that identical boundaries shared by two shapes will be treated as one
-        return a !== b;
-    })));
-```
-
-### Add poverty data to join with our shapes:
-
-- find  `// TODO: Load poverty data CSV here` and replace the single promise to include multiple promises/data sources:
+# 4. Add poverty data and join with shapes:
+:rewind: Replace the single promise to include multiple promises/data sources: `// TODO: replace when we add poverty data`:
 
 ```javascript
 // promises ensure the data are loaded before we try to use them
 Promise.all([
-  d3.json("data/states-albers-10m.json"), // source: https://github.com/topojson/us-atlas#states-albers-10m.json
-  d3.csv("data/poverty_data2018.csv") // source: 2018 Census ACS 5-Year Estimates Subject Tables https://data.census.gov/cedsci/table?q=&g=0100000US.04000.001&table=S0501&tid=ACSST5Y2018.S0501
+  d3.json(geoShapesJson),
+  d3.csv(censusCsv)
 ]).then(ready, function(error) {
   console.log(error); // we could have ended with .then(ready) but you might like to know about the error argument for debugging
 });
 ```
 
-and update the `ready` function to take an array of arguments:
+:rewind: `// TODO: Update to accept an array of data`:
 
 ```javascript
-function ready([us, data]) {...}
+function ready([geoShapes, censusData]) {...}
 ```
 
-- find `// TODO: Set up poverty variables` and we will set up our poverty variables:
-```javascript
-  // Here are the quantitative variables that we need to read to create the map. First, we create empty variables that we're going to fill with our data later
-  var poverty_pcts = {};
-
-  // For each row in the data, we define our variables, telling d3 which columns to look for. The + sign indicates that they need to be converted into numbers, rather than read as text strings
-  data.forEach(function(d) {
-      poverty_pcts[d["NAME"]] = +d.S0501_C01_104E;
-  });
-  console.log("poverty_pcts array: ", poverty_pcts);
-```
-
-### Add colors
-- find `  // TODO: Set up colors` and we set up our colors:
+:new: `// TODO: Set up poverty data objects`
 
 ```javascript
-  // pick colors. We first tell d3 what numbers to look for when creating stops...
-  var color_domain = [5, 10, 15, 20, 25, 30];
+// create empty lookup object to fill with our data in a moment
+var censusPcts = {};
 
-  // Then we tell it what colors to output based on those stops.
-  var color_scale = d3.scaleThreshold()
-      .domain(color_domain)
-      .range(["#f2f0f7", "#dadaeb", "#bcbddc", "#9e9ac8", "#756bb1", "#54278f"]);
+// Loop through each row in censusData
+censusData.forEach(function(d) {
+  // d represents a row in censusData
+  // use the 'NAME' property in our census data to associate our value with the state name
+     // because our state shapes have a corresponding value, we can use that later to match them
+  censusPcts[d["NAME"]] = +d[fieldname]; // the '+' prefix is a shortcut for converting text strings to numbers so we can compare them mathematically
+});
+// let's see what it looks like
+console.log("censusPcts: ", censusPcts);
+```
+:eyes: Check the console for the census data
+
+# 5. Color by value
+We already set up colorDomain (value buckets) and colorArray (hex colors for those buckets).
+Now we set up colorScale, where we set the scale domain to colorDomain and scale range to colorArray
+
+:new: `// TODO: set up color scale`:
+```javascript
+var colorScale = d3.scaleThreshold()
+    .domain(colorDomain)
+    .range(colorArray);
 ```
 
-- find `  // TODO: add colors` to tell each state shape how to determine its color:
+Now we loop through each shape and determine its fill color using colorScale
+:new: `// TODO: assign fill color to states`:
+
 ```javascript
 .style("fill", function(d) {
-  return color_scale(poverty_pcts[d.properties.name]);
+  // d here is an individual state shape's data
+  // d.properties.name is the state's name, which has a twin in censusPcts
+  // so if d.properties.name == 'Alabama', we'll set the colorScale using censusPcts['Alabama']
+  return colorScale(censusPcts[d.properties.name]);
 })
- ```
- 
- 
-### Create a tooltip:
-
-- find `// TODO: Create a tooltip here`, and add our tooltip: 
+```
+ :eyes: Reload the page and our states should be colored
+# 6. Add tooltips
+:new: `// TODO: create HTML tooltip/selection`:
 
 ```javascript
-var tip = d3.select("#tooltip").append("div")
-    .attr("class", "tooltip")
-    .style("opacity", 0);
+/**** append a new tooltip to #tooltip div already set up in index.html ****/
+      // this will be shared by all of our state shapes
+      // note this is a regular HTML element, which is easier to style than SVG text
+var tip = d3.select("#tooltip")
+    .append("div")
+      .attr("class", "tooltip") // styles already defined in index
+      .style("opacity", 0);
 ```
 
-- find `// TODO: add event listener for tooltips`
+:new: `// TODO: add event listener for tooltips`: 
+
 ```javascript
 //add an event listener and set up the tooltips
 .on("mouseover", function(d) {
-       tip.transition()
-         .duration(200)
-         .style("opacity", .9);
-       tip.html("<h3>" + d.properties.name + "</h3>" + poverty_pcts[d.properties.name] + "%")
-         .style("left", (d3.event.pageX) + "px")
-         .style("top", (d3.event.pageY - 28) + "px");
-       })
-     .on("mouseout", function(d) {
-       tip.transition()
-         .duration(500)
-         .style("opacity", 0);
-       });
-console.log("We did it!")
+    tip.transition()
+        .duration(200)
+        .style("opacity", .9);
+    tip.html("<h3>" + d.properties.name + "</h3>" + censusPcts[d.properties.name] + "%")
+        .style("left", (d3.event.pageX) + "px")
+        .style("top", (d3.event.pageY - 28) + "px");
+})
+.on("mouseout", function(d) {
+    tip.transition()
+        .duration(500)
+        .style("opacity", 0);
+});
 ```
+# 4. Add borders to state shapes
+:new: `TODO: add borders to state shapes`:
+
+```javascript
+svg.append("path")
+  .attr("class", "state-borders") // styles already defined in index
+  .attr("d", d3.geoPath()(
+    // topojson.mesh basically simplifies the borders so that identical boundaries shared by two shapes will be treated as one
+    topojson.mesh(geoShapes, geoShapes.objects.states, function(a, b) {
+      return a !== b;
+    })
+  ));
+```
+
+# 5. Make it responsive
+We probably don't have time to get into this but here is a good example https://eyeseast.github.io/visible-data/2013/08/26/responsive-d3/
