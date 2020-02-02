@@ -4,7 +4,37 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>A Simple D3 Map</title>
-  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* some basic styles */
+
+    .states {
+      fill: #c4c4c4; /*default fill color*/
+    }
+    .state-borders {
+      fill: none;
+      stroke: #fff;
+      stroke-width: 0.5px;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      pointer-events: none;
+    }
+
+    #tooltip .tooltip {
+      position: absolute;
+      text-align: center;
+      display: block;
+      padding: 0 10px 10px;
+      font: 12px sans-serif;
+      background: white;
+      border: 0px;
+      border-radius: 8px;
+    }
+    /* don't trigger mouse events when we touch the tooltip,
+       to prevent triggering mouseout accidentally */
+    #tooltip, #tooltip .tooltip {
+        pointer-events: none;
+    }
+    </style>
 </head>
 <body>
 <h1>Poverty Rate</h1>
