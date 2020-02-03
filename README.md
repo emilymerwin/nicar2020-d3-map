@@ -9,11 +9,6 @@
 - Poverty data: [2018 Census ACS 5-Year Estimates Subject Tables](https://data.census.gov/cedsci/table?q=&g=0100000US.04000.001&table=S0501&tid=ACSST5Y2018.S0501)
 - U.S. Atlas shapes: [U.S. Atlas TopoJSON](https://github.com/topojson/us-atlas#readme)
 
-
-### Some notes
-- We are not using jQuery here - not that you every _need_ jQuery, but you especially don't if you are using d3 - it can do pretty much anything jQuery can.
-- good descriptive variable names - consider something easy to do a search for
-
 # 1. Set up our dev environment
 - Start a local python server in your terminal to run our page: `python -m SimpleHTTPServer` (or `python3 -m http.server` for python 3)
 - Open your web browser and visit http://localhost:8000/ and navigate to the `class` folder.
